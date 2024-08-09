@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> 9c7221e8835c9c56a57c918a3fdf82733209923c
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -57,8 +61,11 @@
     <ImageButton
         android:layout_width="41dp"
         android:layout_height="49dp"
+<<<<<<< HEAD
         android:src="@drawable/ic_molniya"
         android:background="@android:color/transparent"
+=======
+>>>>>>> 9c7221e8835c9c56a57c918a3fdf82733209923c
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.043"
@@ -67,11 +74,16 @@
         app:layout_constraintVertical_bias="0.058" />
 
     <ImageButton
+<<<<<<< HEAD
         android:id="@+id/setting"
         android:layout_width="41dp"
         android:layout_height="49dp"
         android:src="@drawable/setting_icon"
         android:background="@android:color/transparent"
+=======
+        android:layout_width="41dp"
+        android:layout_height="49dp"
+>>>>>>> 9c7221e8835c9c56a57c918a3fdf82733209923c
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.956"
@@ -82,8 +94,11 @@
     <ImageButton
         android:layout_width="41dp"
         android:layout_height="49dp"
+<<<<<<< HEAD
         android:src="@drawable/icon_cam1"
         android:background="@android:color/transparent"
+=======
+>>>>>>> 9c7221e8835c9c56a57c918a3fdf82733209923c
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.37"
@@ -94,8 +109,11 @@
     <ImageButton
         android:layout_width="41dp"
         android:layout_height="49dp"
+<<<<<<< HEAD
         android:src="@drawable/icon_yarcost"
         android:background="@android:color/transparent"
+=======
+>>>>>>> 9c7221e8835c9c56a57c918a3fdf82733209923c
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.197"
@@ -106,8 +124,11 @@
     <ImageButton
         android:layout_width="41dp"
         android:layout_height="49dp"
+<<<<<<< HEAD
         android:src="@drawable/ic_folder"
         android:background="@android:color/transparent"
+=======
+>>>>>>> 9c7221e8835c9c56a57c918a3fdf82733209923c
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.913"
@@ -128,8 +149,11 @@
             android:visibility="gone"/>
 
 
+<<<<<<< HEAD
 
 
 
 
+=======
+>>>>>>> 9c7221e8835c9c56a57c918a3fdf82733209923c
 </androidx.constraintlayout.widget.ConstraintLayout>
