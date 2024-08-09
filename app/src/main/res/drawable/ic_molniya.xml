@@ -1,0 +1,15 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="41dp"
+    android:height="41dp"
+    android:viewportWidth="41"
+    android:viewportHeight="41">
+    <!-- Круг -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M20.5,2.5A18,18 0 1 1 2.5,20.5A18,18 0 0 1 20.5,2.5M20.5,0A20.5,20.5 0 1 0 41,20.5A20.5,20.5 0 0 0 20.5,0Z" />
+
+    <!-- Молния -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M23,5L12,26H19V36L29,15H21Z" />
+</vector>

@@ -1,15 +1,22 @@
 package com.example.video
 
 import android.Manifest
+import android.app.Dialog
+import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
+import android.view.View
+import android.widget.SeekBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.example.video.databinding.ActivityMainBinding
 import java.io.File
 import java.util.Locale
@@ -22,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var cameraExecutor: ExecutorService
     private var imageCapture: ImageCapture? = null
+    private var isShowingImage: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +37,23 @@ class MainActivity : AppCompatActivity() {
         // Установка макета с помощью View Binding
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.setting.setOnClickListener {
+            showDialog1()
+        }
+
+        // Установка полноэкранного режима
+        window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                )
+
+        if (savedInstanceState !=null){
+            isShowingImage = savedInstanceState.getBoolean("isShowingImage", false)
+        }
 
         // Проверка разрешений
         if (allPermissionsGranted()) {
@@ -49,6 +74,102 @@ class MainActivity : AppCompatActivity() {
         // Инициализация отдельного потока для работы с камерой
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
+
+    // диалог
+    private fun showDialog1(){
+        val dialog = Dialog(this, R.style.TransparentDialog)
+        dialog.setContentView(R.layout.dialog1)
+
+        val sharedPreferences = getSharedPreferences("MyPreferences", Context.MODE_PRIVATE )
+
+        val seekBar1 = dialog.findViewById<SeekBar>(R.id.seekBar1)
+        val seekBar2 = dialog.findViewById<SeekBar>(R.id.seekBar2)
+        val seekBarText1 = dialog.findViewById<TextView>(R.id.seekBarText1)
+        val seekBarText2 = dialog.findViewById<TextView>(R.id.seekBarText2)
+
+        // Устанавливаем максимальное значение для ползунков
+        seekBar1.max = 1000  // Макс значение 10.00, т.е. 1000 единиц (0.01 на каждое деление)
+        seekBar2.max = 100   // Макс значение 100, т.е. 100 единиц
+
+        // Загружаем сохраненные значения из SharedPreferences
+        val sharedPref = getSharedPreferences("settings", MODE_PRIVATE)
+        val savedValue1 = sharedPref.getFloat("seekBar1Value", 0f)
+        val savedValue2 = sharedPref.getInt("seekBar2Value", 0)
+
+        // Устанавливаем ползунки на сохраненные значения
+        seekBar1.progress = (savedValue1 * 100).toInt() // Умножаем на 100, чтобы получить целое число
+        seekBar2.progress = savedValue2
+
+        // Устанавливаем текстовые поля на сохраненные значения
+        seekBarText1.text = String.format("%.2f", savedValue1)
+        seekBarText2.text = savedValue2.toString()
+
+        // Логика для первого SeekBar (с двумя знаками после запятой)
+
+        seekBar1.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                 seekBar?.let {
+                     it.progress +=10
+                     val value =it.progress/100f
+                     seekBarText1.text = String.format("%.2f", value)
+                 }
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                seekBar?.let {
+                    it.progress +=10
+                    val value =it.progress/100f
+                    seekBarText1.text = String.format("%.2f", value)
+
+                    with(sharedPref.edit()){
+                        putFloat("seekBar1Value", value)
+                        apply()
+                    }
+                }
+            }
+
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                seekBar?.let {
+                    val value = it.progress / 100f
+                    seekBarText1.text = String.format("%.2f", value)
+                }
+            }
+        })
+
+        // Логика для второго SeekBar (с целыми числами)
+        seekBar2.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                // Увеличиваем значение ползунка при начале взаимодействия
+                seekBar?.let {
+                    it.progress += 1  // Увеличиваем значение на 1 единицу
+                    seekBarText2.text = String.format("%.1f", it.progress.toFloat())
+                }
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                seekBar?.let {
+                    val value = it.progress
+                    seekBarText2.text = String.format("%.1f", value.toFloat())
+
+                    with(sharedPref.edit()) {
+                        putInt("seekBar2Value", value)
+                        apply()
+                    }
+                }
+            }
+
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                seekBar?.let {
+                    seekBarText2.text = String.format("%.1f", it.progress.toFloat())
+                }
+            }
+        })
+
+
+        dialog.show()
+    }
+
 
     // Функция для запуска камеры
     private fun startCamera() {
@@ -113,6 +234,16 @@ class MainActivity : AppCompatActivity() {
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     // Уведомление о успешном сохранении фотографии
                     Toast.makeText(applicationContext, "Фото сохранено: ${photoFile.absolutePath}", Toast.LENGTH_SHORT).show()
+
+                    // Отображение фотографии в ImageView
+                    val photoUri = photoFile.toUri()
+                    binding.photoView.setImageURI(photoUri)
+                    binding.photoView.visibility=View.VISIBLE
+                    binding.previewView.visibility = View.GONE
+                    binding.buttonCapture.visibility = View.GONE
+
+
+
                 }
             }
         )
@@ -137,6 +268,16 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Разрешения не получены", Toast.LENGTH_SHORT).show()
                 finish()
             }
+        }
+    }
+
+    override fun onBackPressed() {
+        if (binding.photoView.visibility == View.VISIBLE) {
+            binding.photoView.visibility = View.GONE
+            binding.previewView.visibility = View.VISIBLE
+            binding.buttonCapture.visibility = View.VISIBLE
+        } else {
+            super.onBackPressed()
         }
     }
 
